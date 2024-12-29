@@ -1,4 +1,14 @@
 import time
+import sys
+from colored import fg
+magenta = fg("magenta")
+
+def scroll(text, scroll_interval=0.01):
+    text = list(text)
+    for char in text:
+        print(char, end = "")
+        sys.stdout.flush()
+        time.sleep(scroll_interval)
 class Weapon:
     def __init__(self, name, damage, durability):
         self.name = name
@@ -46,7 +56,7 @@ class Room:
         self.is_npc_present = npc
         self.locked = locked
     def display_current(self):
-        print(self.name)
+        print(self.name, self.is_npc_present, self.locked)
 class Key:
     def __init__(self, name, colour, property):
         self.name = name
@@ -69,10 +79,14 @@ class NPC:
         self.thank = thank
     def interact_player(self):
         for line in self.dialogue:
-            print(line)
+            scroll(magenta + line)
+            time.sleep(1)
+            print("")
     def thank_player(self):
         for line in self.thank:
-            print(line)
+            scroll(magenta + line)
+            time.sleep(1)
+            print("")
 
 class Door:
     def __init__(self, name, locked: bool):
@@ -81,6 +95,6 @@ class Door:
 
     def interact(self,player: object):
         if self.locked:
-            print(f"\n Not yet, {player.name}! You haven't opened me with the key yet!")
+            print(f" Not yet, {player.name}! You haven't opened me with the key yet!")
             time.sleep(2)
     
