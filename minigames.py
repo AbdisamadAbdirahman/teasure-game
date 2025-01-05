@@ -145,65 +145,36 @@ class TicTacToe:
             ]
     self.winner = ' '
     self.user_turn = True
+
 class Hangman:
   def __init__(self):
-    self.guesses_left = 0
+    self.guesses_left = 6
     self.number_of_guesses = 0
+    self.winner = False
+    self.word = ""
+    self.wrong_letters = []
+    self.generated_list = []
+    self.generated_underscore_list = []
   word_list = []
-  generated_list = []
-  generated_underscore_list = []
-  wrong_letters = []
-  def load_words():
-      with open('text.txt') as word_file:
-          valid_words = set(word_file.read().split())
-
-      with open('words_beta.txt', "a") as word_file:
-          word_file.write(str(valid_words))
-      return valid_words
-
-  def generate_word_list(num1,num2):
-      global word_list
-      with open("text.txt", "r") as file:
-          for line in file:
-              if len(line) > num1 and len(line) < num2:
-                  word_list = []
-                  word_list.append(line.strip())
-      for i in range(len(generated_list)):
-          generated_list.append(word[i-1])
-          generated_underscore_list = []
-          generated_underscore_list.append("_")
-      return word_list
-      
+  
   with open("text.txt", "r") as file:
-      for line in file:
-          if len(line) > 2:
-              word_list.append(line.strip())
-
+    for line in file:
+        if len(line) > 2:
+            word_list.append(line.strip())
 
   def restart(self):
-      global guesses_left, word, generated_list, generated_underscore_list, number_of_guesses, wrong_letters
       self.guesses_left = 6
       self.number_of_guesses = 0
-      generated_list = []
-      generated_underscore_list = []
-      wrong_letters = []
+      self.wrong_letters = []
+
+      self.word = random.choice(Hangman.word_list)
+      print("The word has",str(len(self.word)),"letters.")
       
-      word = random.choice(word_list)
-      print("The word has",str(len(word)),"letters.")
-      for i in range(len(word)):
-          generated_list.append(word[i])
-          generated_underscore_list.append("_")
-      
-  def anothergo(self):
-      anothergo_str = input("Another go? y/n: ").lower()
-      if anothergo_str == "y":
-          self.restart()
-      elif anothergo_str == "n":
-          print("Alright, have a nice day.")
-          exit()
-      else:
-          print("Invalid input, assuming you do not want another go")
-          exit() 
+      self.generated_list = []
+      self.generated_underscore_list = []
+      for i in range(len(self.word)):
+          self.generated_list.append(self.word[i])
+          self.generated_underscore_list.append("_")
 
   def display_hangman(self,guesses_left):
       stages = [  
@@ -216,7 +187,7 @@ class Hangman:
                     |     / \\
                     -
                   """,
-                
+
                   """
                     --------
                     |      |
@@ -226,7 +197,7 @@ class Hangman:
                     |     / 
                     -
                   """,
-                  
+
                   """
                     --------
                     |      |
@@ -236,7 +207,7 @@ class Hangman:
                     |      
                     -
                   """,
-                  
+
                   """
                     --------
                     |      |
@@ -246,7 +217,7 @@ class Hangman:
                     |     
                     -
                   """,
-                
+
                   """
                     --------
                     |      |
@@ -256,7 +227,7 @@ class Hangman:
                     |     
                     -
                   """,
-                  
+
                   """
                     --------
                     |      |
@@ -266,7 +237,7 @@ class Hangman:
                     |     
                     -
                   """,
-                  
+
                   """
                     --------
                     |      |
@@ -279,18 +250,19 @@ class Hangman:
       ]
       return stages[guesses_left]
 
-  
+
 
   def start_game(self):
-    while self.guesses_left != 0:
-        if "_" not in generated_underscore_list:
+    while self.guesses_left != 0 and not self.winner:
+        if "_" not in self.generated_underscore_list:
             print(self.display_hangman(self.guesses_left))
-            print("Congratulations! You guessed the word correctly! The word was "+word+"!")
+            print("Congratulations! You guessed the word correctly! The word was "+self.word+"!")
             print("It took you",str(7 - self.guesses_left),"attempts.")
-            self.anothergo()
+            self.winner = True
+            break
         print(self.display_hangman(self.guesses_left))
-        print(generated_underscore_list)
-        
+        print(self.generated_underscore_list)
+
         guess = input("Enter your guess: ")
         if not guess.isalpha():
             print("You need to guess letters (in English).")
@@ -298,37 +270,42 @@ class Hangman:
         if len(guess) < 1:
             print("An input needs to be given.")
             continue
+        elif guess == "idk":
+          self.guesses_left = 0
+          continue
+        elif guess == "no":
+          self.winner = True
+          continue
         elif len(guess) > 1:   
-            if guess == word:
-                number_of_guesses += 1
-                print(self.display_hangman(guesses_left))
+            if guess == self.word:
+                self.number_of_guesses += 1
+                print(self.display_hangman(self.guesses_left))
                 print("Correct! Well done!")
                 print("It took you",str(7 - self.guesses_left),"attempts.")
-                self.anothergo()
+                self.winner = True
             else:
                 self.number_of_guesses += 1
                 print("Wrong!")
 
-        if guess not in generated_list:
+        if guess not in self.generated_list:
             self.number_of_guesses += 1
             print("Letter not in word.")
             self.guesses_left -= 1
-            if guess not in wrong_letters:
-                wrong_letters.append(guess)
+            if guess not in self.wrong_letters:
+                self.wrong_letters.append(guess)
             else:
                 print("You already guessed that")
                 self.number_of_guesses -= 1
             if self.guesses_left == 0:
-                print(self.display_hangman(guesses_left))
-                print("You lose! The word was",word)
-                self.anothergo()
+                print(self.display_hangman(self.guesses_left))
+                print("You lose! The word was",self.word)
                 continue
             print("You have",self.guesses_left, "guesses left")
-            print("Wrong letters:", wrong_letters)
+            print("Wrong letters:", self.wrong_letters)
         else:
-            print("Letter in word")
-            for i in range(len(word)):
-                if guess == generated_list[i]:
-                    generated_underscore_list[i] = guess
+            print("Letter in word.")
+            for i in range(len(self.word)):
+                if guess == self.generated_list[i]:
+                    self.generated_underscore_list[i] = guess
             print("You have ",self.guesses_left,"guesses left")
-            print("Wrong letters: ",wrong_letters)
+            print("Wrong letters: ",self.wrong_letters)

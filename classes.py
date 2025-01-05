@@ -66,6 +66,8 @@ class Key:
         if self.room == room.name:
             room.locked = False
             print(f"Room {room.name} has been unlocked!")
+        else:
+            print("This key didn't work!")
     def unlock_door(self, door: object):
         if self.room == door.name:
             door.locked = False

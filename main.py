@@ -4,6 +4,7 @@ import sys
 from pyfiglet import Figlet
 from colored import fg
 import time
+from imgcat import imgcat
 import random
 def scroll(text):
     text = list(text)
@@ -37,18 +38,21 @@ room3 = Room("end room 3", False, True)
 room_list = [
     Room("dungeon room 1", True, True),
     Room("puzzle room 1", True, True),
-    Room("dungeon room 2", False, True)
+    Room("dungeon room 2", False, True),
+    Room("puzzle room 2", True, True)
 ]
 npc_list = [
     NPC("The Shade","dungeon room 1", ["Ah, awake at last... Good. I was beginning to think you'd sink beneath the weight of your dreams forever.","Strange tides have carried you here, sailor. Do you even recall the taste of the salt air, the cries of your crew, or the treasures you held so dear?"], None),
-    NPC("The Threefold Oracle","puzzle room 1", ["..."], ["Clever, sailor. You have danced the grid and claimed victory where many faltered.","But remember this: a single triumph does not guarantee escape. The dungeon watches, and it will not be so easily outwitted again.","Step forward, and face what lies beyond... if you dare."])
-
+    NPC("The Threefold Oracle","puzzle room 1", ["..."], ["Clever, sailor. You have danced the grid and claimed victory where many faltered.","But remember this: a single triumph does not guarantee escape. The dungeon watches, and it will not be so easily outwitted again.","Step forward, and face what lies beyond... if you dare."]),
+    NPC("The Word Warden","puzzle room 2",["..."],["You have danced with letters and evaded the noose... for now. Clever, yes, but do not let victory lull you into complacency. The dungeon has far greater trials awaiting you.","Go, wordsmith. Your journey continues, though the shadows grow ever darker."])
 ]
+
 colour = fg(colour)
 cyan = fg(45)
 red = fg("red")
 yellow = fg("yellow")
 magenta = fg("magenta")
+plum = fg(96)
 print(colour + "This is what your text will look like.") 
 scroll_interval = float(input("Select your scroll interval (default = 0.05): "))
 print("Would you like to hear your origin story?")
@@ -212,7 +216,7 @@ while True:
                         time.sleep(2)
                         scroll("Step carefully, for this place thrives on confusion. Solve, or surrender — it does not care which you choose. \n")
                         time.sleep(2)
-                        scroll(colour + "And with that, the Shade disappears into the shadows, which revealed a key. \n")
+                        scroll(colour + "And with that, the Shade disappears into the shadows, which revealed a green key. \n")
                         time.sleep(1)
                         key2 = Key("Key 2", "green", "dungeon room 1")
                         scroll("'Oh. Well that was nice of him, whatever his name was again' you think to yourself. \n")
@@ -222,7 +226,7 @@ while True:
                         time.sleep(1)
                         scroll("And you walk in to the next room. \n")
                         time.sleep(1)
-                        player.inventory.append(key2)
+                        player.inventory.append(key2.name)
                         count += 1   
                         break
                     elif npc.current_room == "puzzle room 1":
@@ -263,26 +267,123 @@ while True:
                         scroll_big(g.renderText("BOOM!") + "\n")
                         scroll("'Why did the machine blow up bro \U0001F62D \U0001F64F' \n")
                         scroll("Amongst all of the debris, there lay a blue key \n")
-                        key3 = Key("Puzzle Key","blue key","puzzle room 1")
+                        key3 = Key("Puzzle Key","blue","puzzle room 1")
                         scroll("'The machine did NOT have to die to give me this \U0001F480 \U0001F64F' \n")
                         scroll("But oh well, you go to unlock the door again... \n")
                         key3.unlock_room(room_list[count]) 
                         time.sleep(1)
                         scroll("And you walk in to the next room. \n")
                         time.sleep(1)
-                        player.inventory.append(key3)
+                        player.inventory.append(key3.name)
                         count += 1   
-                        break       
+                        break
+                    elif npc.current_room == "puzzle room 2":
+                        hang = Hangman()
+                        scroll(colour + "The NPC in this room also appears to not speak. But you've seen this before. This isn't an NPC. This is... a hangman machine?")
+                        scroll("The Monster from the previous room releases you and you scramble up onto your feet. \n")
+                        scroll("'Why? Why not just like riddles or something? Why is there a HANGMAN machine out of anything?'")
+                        scroll(plum + "Shut up.")
+                        scroll(colour + "'My fault.' \n")
+                        scroll("You've been through this before. You OBVIOUSLY have to verse the Monster in a hangman battle.")
+                        scroll(plum + "What? No! You have to beat the hangman in under 5 attempts.")
+                        scroll(colour + "Oh. \n")
+                        scroll("Well, you heard the guy. \n")
+                        scroll(magenta + "'You have 7 tries, actually.' said the machine, once again out of nowhere. \n")
+                        scroll(plum + "Bro, he didn't need to know that! Now he's guaranteed to win.")
+                        scroll(magenta + "I thought you said you were fair.")
+                        scroll(plum + "Just start the game man.")
+                        while True:
+                            print(magenta + "Game starting")
+                            hang.restart()
+                            hang.start_game()
+                            if hang.winner:
+                                npc.thank_player()
+                                break
+                            else:
+                                scroll(magenta + "Ah, the noose tightens, and the final letter eludes you. Your wit has failed, and so too shall you.")
+                                scroll("In this dungeon, failure is not forgiven. Prepare to meet the fate reserved for those who cannot solve its secrets.")
+                                scroll(plum + "You heard the machine. Prepare to meet your fate.")
+                                scroll(colour + "The monster pulls out an AXE and makes quick work of you. \n")
+                                time.sleep(1)
+                                scroll_big(red + f.renderText("YOU DIED"))
+                                exit()
+                        scroll(colour + "You once again hear a loud hum. Since you've seen this before, you take off running to the corner of the room. \n")
+                        scroll(plum + "Where are you going? Don't you want to claim your- \n")
+                        scroll_big(g.renderText("BOOM!"))
+                        scroll(colour + "The machine blows up again, this time taking out the monster with it. \n")
+                        scroll("'Can these machines STOP blowing up? This is NOT necessary \U0001F62D \U0001F64F' \n")
+                        scroll("But now you have to find the key among both rubble AND blood and flesh. You're a pirate though, so this is not too unfamiliar. \n")
+                        scroll("Among the mess, you find a black key covered in blood and rubble.")
+                        key4 = Key("Key 4","black","treasure room")
+                        scroll("You go up to unlock the door... \n")
+                        key4.unlock_room(room_list[count])
+                        scroll("Huh. Weird. The key doesn't work. Perhaps there is another key among the mess?")
+                        while True:
+                            final_decision = input("Do you want to throw the black key out? (y/n): ").lower()
+                            if final_decision not in ['y','n']:
+                                print("Please enter only y or n.")
+                            elif final_decision == "y":
+                                scroll("You toss the black key aside.")
+                        count += 1
+                        break
                 else:
                     scroll("Bro, you're not gonna move on without interacting with the NPC. I know I said you can make your own decisions, but there kind of is a set way to win.")
             else:
-                another_choice = input("Explore the room? (y,n): ").lower()
-                if another_choice not in ['y','n']:
-                    scroll("\n Please enter only y or n.")
-                elif another_choice == "y":
-                    scroll("The room is dark. You scramble to find a light switch and switch it on with haste, only to reveal a MONSTER!")
-                    monster = Monster("Charles",100,10)
-    else:
+                while True:
+                    another_choice = input("\n Explore the room? (y,n): ").lower()
+                    if another_choice not in ['y','n']:
+                        scroll("\n Please enter only y or n.")
+                    elif another_choice == "y":
+                        scroll("The room is dark. You scramble to find a light switch and switch it on with haste, only to reveal a MONSTER! \n")
+                        monster = Monster("Charles",100,10)
+                        scroll(plum + "Intruder... You trespass where you do not belong. Speak quickly: why should I not rend you apart where you stand? \n")
+                        time.sleep(1)
+                        scroll(cyan + "Here are your options: ")
+                        print("\n 1. 'Let me escape this place man' \n 2. 'Move man' \n 3. 'Do I HAVE to fight you?' \n 4. 'Get out of my head!' \n 5. (you say nothing and prepare to fight) ")
+                        print(colour + "")
+                        choice5 = input("Enter options (1,2,3,4,5): ")
+                        if choice5 not in ['1','2','3','4','5']:
+                            scroll("\n Please enter only 1,2,3,4 or 5. Defaulting to 1.")
+                            time.sleep(1)
+                            choice5 = "1"
+                        if choice5 == "1":
+                            scroll(plum + "Escape? Fool. No one escapes this labyrinth unless it allows them to. But perhaps... I can let you live. Solve my riddle, and I may spare you. \n")
+                            scroll("I have no eyes, yet I see all. I have no lungs, yet I breathe. I have no life, yet I can die. What am I?")
+                            print(colour + "")
+                            riddle = input("Enter your answer: ").lower().strip()
+                            if riddle in ["a flame","flame","fire","a fire"]:
+                                scroll(plum + "Clever, but you aren't deemed worthy of escape yet. Another trial will begin shortly. Prove your worth, and the dungeon might forgive you. \n")
+                            else:
+                                scroll(plum + "Incorrect! Your ignorance deems your fate, but I will forgive your mistakes just this once. Another trial will begin shortly, prove that you aren't ignorant, and you might live. \n")
+                        elif choice5 == "2":
+                            scroll(plum + "No. I shall only move if you prove your worth in this upcoming trial. Fail to succeed, and you have succeeded to fail. Once again. \n")
+                        elif choice5 == "3":
+                            scroll(plum + "Fool, I have no intent of fighting you, as this will only result in my victory. Although I am a beast, I want to give every opponent a chance. And this next upcoming trial will be your ONLY chance. \n")
+                        elif choice5 == "4":
+                            scroll(plum + "Out of your head? I am not in your head, you idiot. It is you who are in mine. The walls hear you. The stones feel you. The air itself watches you. \n")            
+                        else:
+                            scroll(plum + "Ha! You IDIOT! You think you can defeat ME without a weapon? I would have given you a chance to get past, but your ignorance has sealed your fate. \n")
+                            monster.attack(player)
+                            scroll(colour + "The monster lunges and punches you, dealing 10 damage. \n")
+                            scroll(colour + "'That's it? Only 10 damage? Yeah this is about to be quick.'\n")
+                            scroll("You open your inventory to pull out your trusty sword, only to find: \n")
+                            print(player.inventory)
+                            scroll("Keys. You only have keys on you, you idiot. Now you have no weapon to fight. And don't say 'But I can use those as brass knuckles' because the keys aren't sharp enough.")
+                            scroll(plum + "'yEaH tHiS iS aBoUt To Be QuIcK' Yeah, for YOU! \n")
+                            scroll(colour + "The monster pulls out an AXE and makes quick work of you. \n")
+                            time.sleep(1)
+                            scroll_big(red + f.renderText("YOU DIED"))
+                            exit()
+                    else:
+                        scroll("Bro you HAVE to explore the room. What are you doing? \n")
+                    scroll(colour + "'Wait. What trials are you talking about? And why are you sparing me?'")
+                    scroll("You are silenced as you are picked up by the beast as he unlocks the door into the next room.")
+                    count += 1
+                    break
+            break    
+
+
+    else:                   
         scroll(f"\n Name: {player.name} ")
         time.sleep(0.5)
         scroll(f"\n Health: {player.health} ")
