@@ -4,7 +4,6 @@ import sys
 from pyfiglet import Figlet
 from colored import fg
 import time
-from imgcat import imgcat
 import random
 def scroll(text):
     text = list(text)
@@ -39,12 +38,16 @@ room_list = [
     Room("dungeon room 1", True, True),
     Room("puzzle room 1", True, True),
     Room("dungeon room 2", False, True),
-    Room("puzzle room 2", True, True)
+    Room("puzzle room 2", True, True),
+    Room("treasure room",True,True),
+    Room("actual treasure room",True,False)
 ]
 npc_list = [
     NPC("The Shade","dungeon room 1", ["Ah, awake at last... Good. I was beginning to think you'd sink beneath the weight of your dreams forever.","Strange tides have carried you here, sailor. Do you even recall the taste of the salt air, the cries of your crew, or the treasures you held so dear?"], None),
     NPC("The Threefold Oracle","puzzle room 1", ["..."], ["Clever, sailor. You have danced the grid and claimed victory where many faltered.","But remember this: a single triumph does not guarantee escape. The dungeon watches, and it will not be so easily outwitted again.","Step forward, and face what lies beyond... if you dare."]),
-    NPC("The Word Warden","puzzle room 2",["..."],["You have danced with letters and evaded the noose... for now. Clever, yes, but do not let victory lull you into complacency. The dungeon has far greater trials awaiting you.","Go, wordsmith. Your journey continues, though the shadows grow ever darker."])
+    NPC("The Word Warden","puzzle room 2",["..."],["You have danced with letters and evaded the noose... for now. Clever, yes, but do not let victory lull you into complacency. The dungeon has far greater trials awaiting you.","Go, wordsmith. Your journey continues, though the shadows grow ever darker."]),
+    NPC("Treasure chest","treasure room",["..."],None),
+    NPC("Abshir Cisse","actual treasure room",["..."],None)
 ]
 
 colour = fg(colour)
@@ -53,6 +56,8 @@ red = fg("red")
 yellow = fg("yellow")
 magenta = fg("magenta")
 plum = fg(96)
+italics = '\033[3m'
+end = '\033[0m'
 print(colour + "This is what your text will look like.") 
 scroll_interval = float(input("Select your scroll interval (default = 0.05): "))
 print("Would you like to hear your origin story?")
@@ -124,7 +129,7 @@ else:
             key1.unlock_door(door1)
             print(colour + "\n")
             scroll("Success! You unlocked the door to the jail and are now free. ")
-            player.inventory.append(key1)
+            player.inventory.append(key1.colour)
             break
         elif choice2 == 2:
             scroll("You frantically open your convenient bag along your waist. From there you see: \n")
@@ -142,15 +147,41 @@ else:
             exit()
 
 rnd = random.randint(1,10000)
-if rnd == 6926:
-    scroll_big(g.renderText("\n [24/11/1987, 7 pm GMT, Current Location: In front of the treasure] \n"))
-    scroll("Erm. Why are you in front of the treasure? How have you done that? ")
+if rnd == 6962:
+    scroll_big(g.renderText("\n [24/11/1987, 7 pm GMT, Current Location: In the treasure room] \n"))
+    scroll("Erm. Why are you in the treasure room? How have you done that? ")
     time.sleep(1)
-    scroll("Well, I guess you win.")
-    colour = fg("yellow")
-    print(colour + "\n")
-    scroll_big(f.renderText("YOU WIN!"))
-    scroll("\n If you're confused about what happened, this message has a 1 in 10000 chance of appearing.")
+    scroll("Well, I guess we'll skip to the end.")
+    scroll("\n (If you're confused about what happened, this message has a 1 in 10000 chance of appearing. Great job, you found the secret ending on accident!) \n")
+    scroll("You look around to find your crew tied up, next to the treasure.")
+    scroll(plum + "*muffled cheers of excitement* \n")
+    scroll(colour + "'What? How did all of you get here?'")
+    scroll("You free your co-captain, Abshir Cisse, to do the talking for the rest of the crew. ")
+    scroll(plum + f"{name}! Thank you for freeing us! Listen, we NEED to get back with this treasure, before it's too late! \n")
+    scroll(colour + "'Too late?'")
+    scroll(plum + "I lied. We aren't in a time constraint, don't worry. BUT, we still have to get back to Kismaayo, we've been trapped in here for how long? \n")
+    scroll_big(g.renderText("[26/11/1987, 7 pm GMT, Current Location: In the treasure room] \n"))
+    scroll(colour + "'Only 2 days, apparently.' \n")
+    scroll(plum + "That's besides the point. We ALL have to get back home... \n")
+    
+    scroll(colour + italics + "'But wait. Didn't they betray me? Didn't they want to take the treasures themselves?' \n" + end)
+    while True:
+        choice8 = input(colour + "Do you leave them behind? (y/n): ").lower().strip()
+        if choice8 not in ['y','n']:
+            print("Please enter only y or n. ")
+        elif choice8 == 'y':
+            scroll("Without saying another word, you take the treasures and disappear in an instant. \n")
+            scroll("You get back home with all the treasure, and were greeted by cheers and applause. \n")
+            scroll("Upon interrogation about the rest of the crew, you make up a fake story, get caught and are sentenced to life in prison. \n")
+            scroll_big(yellow + f.renderText("YOU WON, BUT AT WHAT COST?"))
+            exit()
+        elif choice8 == 'n':
+            scroll(italics + "No, I'm not like this, I'm a good person. \n" + end)
+            scroll("With the help of Abshir, you untie the rest of the crew, and disappear from the dungeon in an instant. \n")
+            scroll("You get back home safely with all the treasure, and your crew, and were greeted by cheers and applause. \n")
+            scroll("The president of Somalia recognises your great feat and hails you and your crew for your brave actions. \n")
+            scroll_big(yellow + f.renderText("YOU WON!"))
+            exit()
     exit()
 else:
     scroll_big(g.renderText("\n [24/11/1987, 7 pm GMT, Current Location: Outside the jail] \n"))
@@ -226,7 +257,7 @@ while True:
                         time.sleep(1)
                         scroll("And you walk in to the next room. \n")
                         time.sleep(1)
-                        player.inventory.append(key2.name)
+                        player.inventory.append(key2.colour)
                         count += 1   
                         break
                     elif npc.current_room == "puzzle room 1":
@@ -289,9 +320,9 @@ while True:
                         scroll(colour + "Oh. \n")
                         scroll("Well, you heard the guy. \n")
                         scroll(magenta + "'You have 7 tries, actually.' said the machine, once again out of nowhere. \n")
-                        scroll(plum + "Bro, he didn't need to know that! Now he's guaranteed to win.")
-                        scroll(magenta + "I thought you said you were fair.")
-                        scroll(plum + "Just start the game man.")
+                        scroll(plum + "Bro, he didn't need to know that! Now he's guaranteed to win. ")
+                        scroll(magenta + "I thought you said you were fair. ")
+                        scroll(plum + "Just start the game man. ")
                         while True:
                             print(magenta + "Game starting")
                             hang.restart()
@@ -317,15 +348,125 @@ while True:
                         key4 = Key("Key 4","black","treasure room")
                         scroll("You go up to unlock the door... \n")
                         key4.unlock_room(room_list[count])
-                        scroll("Huh. Weird. The key doesn't work. Perhaps there is another key among the mess?")
+                        scroll("Huh. Weird. The key doesn't work. Perhaps there is another key among the mess? \n")
                         while True:
                             final_decision = input("Do you want to throw the black key out? (y/n): ").lower()
                             if final_decision not in ['y','n']:
                                 print("Please enter only y or n.")
                             elif final_decision == "y":
-                                scroll("You toss the black key aside.")
+                                scroll("You toss the black key aside, and rummage around to find a purple key.")
+                                key5 = Key("Key 5","purple","treasure room")
+                                scroll("'Surely this must be it..' you think as you open the door, and walk into the next room.")
+                                player.inventory.append(key5.colour)
+                            else:
+                                scroll("'Actually, I might need this key', you think as you go back and rummage around to find a purple key.")
+                                key5 = Key("Key 5","purple","treasure room")
+                                scroll("'Surely this must be it..' you think as you open the door, and walk into the next room.")
+                                player.inventory.append(key4.colour)
+                                player.inventory.append(key5.colour)                                
+                            break
                         count += 1
                         break
+                    elif npc.current_room == "treasure room":
+                        scroll("The NPC in this room, once again, doesn't speak. Because, there obviously is not an NPC, It's.. a door? \n")
+                        door2 = Door("treasure room",True)
+                        scroll("You walk up to the door to find out it has FIVE keyholes. There is also a note posted on the front of the door. It reads: \n")
+                        scroll(yellow + "Evaluate the following integral to 1 significant figure for the clue : (bottom limit: 0, top limit: π/2) ∫ (e^(sin(x)))/(3.5+cos^2(x)) with respect to x. \n")
+                        scroll(colour + "'I thought this game was in english?' ")
+                        scroll(yellow + "It is in English. It's called MATHS. ")
+                        scroll(colour + "'What's that?'")
+                        scroll(yellow + "You don't know MATHS? Ugh, fine, I'll give you 8 options, just because I'm nice. ")
+                        scroll(cyan + "Here are your options: ")
+                        print("\n 1. '0' \n 2. '0.2' \n 3. '0.6' \n 4. '0.8' \n 5. '1' \n 6. '1.4' \n 7. '2.2' \n 8. 'π' ")
+                        print(colour + "")
+                        scroll("'π'? What? \n")
+                        scroll(yellow + "Shut up and pick an option already. ")
+                        scroll(colour + "Erm, okay. \n")
+                        while True:
+                            choice6 = input(colour + "Enter options (1,2,3,4,5,6,7,8): ")
+                            if choice6 not in ['1','2','3','4','5','6','7','8']:
+                                scroll("\n Please enter only 1,2,3,4,5,6,7 or 8. \n")
+                            elif choice6 != '4':
+                                scroll(yellow + "WRONG! But I'll let you keep trying, just because I feel sorry for you. \n")
+                            else:
+                                scroll(yellow + "Correct! Now figure out what it means, and you will be sure to escape... \n")
+                                scroll(colour + "And with that, the door stops talking. \n")
+                                scroll("Okay, so I've already figured it out, so good luck. \n")
+                                time.sleep(5)
+                                scroll("Nothing? You have NO clue what 0.8 means? \n")
+                                scroll("'Of course I have no clue what 0.8 could mean, I don't know MATHS.' \n")
+                                scroll("BRO- okay, let me just lead you on. ")
+                                while True:
+                                    choice6 = input("Convert 0.8 to a fraction: ")
+                                    if choice6 != '4/5':
+                                        scroll("Not quite. Try again. \n")
+                                    else:
+                                        scroll("Correct! Now since the door has FIVE keyholes, what could 4/5 tell you? \n")
+                                        scroll("'Oh! You need 4 out of 5 keys to get through!' \n")
+                                        scroll("Well done! \n")
+                                        if len(player.inventory) >= 4:
+                                            scroll("'And I have enough, because I kept the black key from earlier!' \n")
+                                            scroll("You approach the door with haste, and waste no time. You unlock the green keyhole. ")
+                                            scroll("You unlock the purple keyhole. ")
+                                            scroll("You unlock the black keyhole. ")
+                                            scroll("Now for the blue keyhole. You approach the door holding the blue key, and watch in HORROR as the key disintegrates in your hand. \n")
+                                            scroll("'What? NO! My chance to ESCAPE! NO!'")
+                                            if "red" in player.inventory:
+                                                scroll("Don't panic, you have a red key too. \n")
+                                                scroll("'Oh yeah. Forgot that I did the tutorial like you were supposed to.' \n")
+                                                scroll("You unlock the red keyhole, and..")
+                                                print("Door treasure room has been unlocked!")
+                                                scroll("And you walk into the next room for the final time. \n")
+                                                break
+                                            else:
+                                                scroll("You have no other keys, do you? \n")
+                                                scroll("'No, why would I?' \n")
+                                                scroll("You see the red keyhole? Yeah, you woulda got that key if you did the tutorial. Sorry bro \n")
+                                                scroll("'Really. So I did ALL THAT, just to LOSE because of a TUTORIAL?'")
+                                                scroll("Sorry bro, that's life \n")
+                                                time.sleep(1)
+                                                scroll_big(red + f.renderText("YOU LOSE"))
+                                                exit()
+                                        else:
+                                            scroll("You only appear to have 3 keys. You probably shouldn't have thrown out that black key. \n")
+                                            scroll("'Can I go back and get it?' No. \n")
+                                            scroll("'So I lose?' Yeah. \n")
+                                            time.sleep(1)
+                                            scroll_big(red + f.renderText("YOU LOSE"))
+                                            exit()
+                                break
+                        count += 1 
+                        break
+                    else:
+                        scroll("The NPC in this room doesn't speak either, that's because it's.. all of your crew members tied up? \n")
+                        scroll(plum + "*muffled cheers of excitement* \n")
+                        scroll(colour + "'What? How did all of you get here?'")
+                        scroll("You free your co-captain, Abshir Cisse, to do the talking for the rest of the crew. ")
+                        scroll(plum + f"{name}! Thank you for freeing us! Listen, we NEED to get back with this treasure, before it's too late! \n")
+                        scroll(colour + "'Too late?'")
+                        scroll(plum + "I lied. We aren't in a time constraint, don't worry. BUT, we still have to get back to Kismaayo, we've been trapped in here for how long? \n")
+                        scroll_big(g.renderText("[26/11/1987, 7 pm GMT, Current Location: In the treasure room] \n"))
+                        scroll(colour + "'Only 2 days, apparently.' \n")
+                        scroll(plum + "That's besides the point. We ALL have to get back home... \n")
+                        scroll(colour + italics + "But wait. Didn't they betray me? Didn't they want to take the treasures themselves? \n" + end)
+                        while True:
+                            choice7 = input(colour + "Do you leave them behind? (y/n): ").lower().strip()
+                            if choice7 not in ['y','n']:
+                                print("Please enter only y or n. ")
+                            elif choice7 == 'y':
+                                scroll("Without saying another word, you take the treasures and disappear in an instant. \n")
+                                scroll("You get back home with all the treasure, and were greeted by cheers and applause. \n")
+                                scroll("Upon interrogation about the rest of the crew, you make up a fake story, get caught and are sentenced to life in prison. \n")
+                                scroll_big(yellow + f.renderText("YOU WON, BUT AT WHAT COST?"))
+                                exit()
+                            elif choice7 == 'n':
+                                scroll(italics + "No, I'm not like this, I'm a good person. \n" + end)
+                                scroll("With the help of Abshir, you untie the rest of the crew, and disappear from the dungeon in an instant. \n")
+                                scroll("You get back home safely with all the treasure, and your crew, and were greeted by cheers and applause. \n")
+                                scroll("The president of Somalia recognises your great feat and hails you and your crew for your brave actions. \n")
+                                scroll_big(yellow + f.renderText("YOU WON!"))
+                                exit()
+
                 else:
                     scroll("Bro, you're not gonna move on without interacting with the NPC. I know I said you can make your own decisions, but there kind of is a set way to win.")
             else:
